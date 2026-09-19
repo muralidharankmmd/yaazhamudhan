@@ -15,6 +15,10 @@ const moments = defineCollection({
       // so they're referenced by URL rather than imported like images.
       videos: z.array(z.string()).default([]),
       featured: z.boolean().default(false),
+      // A "story" moment gets a hero slideshow on the homepage and opens
+      // into a full-page, one-at-a-time viewer (gallery images, then
+      // videos, in the order listed) instead of the standard grid layout.
+      story: z.boolean().default(false),
     }),
 });
 

@@ -1,0 +1,92 @@
+---
+import { getImage } from "astro:assets";
+
+const rawImages = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/backgrounds/*.{jpeg,jpg,png}",
+  { eager: true }
+);
+
+const sources = Object.values(rawImages)
+  .map((mod) => mod.default)
+  .sort((a, b) => a.src.localeCompare(b.src, undefined, { numeric: true }));
+
+const optimized = await Promise.all(
+  sources.map((src) =>
+    getImage({ src, width: 1920, format: "webp", quality: 65 })
+  )
+);
+---
+
+<div class="bg-slideshow" aria-hidden="true" data-interval="5000">
+  {
+    optimized.map((img, i) => (
+      <img
+        src={img.src}
+        class="bg-slide"
+        class:list={[{ active: i === 0 }]}
+        alt=""
+        loading={i === 0 ? "eager" : "lazy"}
+      />
+    ))
+  }
+  <div class="bg-wash"></div>
+</div>
+
+<style>
+  .bg-slideshow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .bg-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.8s ease;
+    filter: saturate(0.85) blur(1px);
+  }
+
+  .bg-slide.active {
+    opacity: 1;
+  }
+
+  .bg-wash {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 250, 243, 0.82);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-slide {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function startSlideshow() {
+    const root = document.querySelector<HTMLElement>(".bg-slideshow");
+    if (!root) return;
+
+    const slides = Array.from(root.querySelectorAll<HTMLImageElement>(".bg-slide"));
+    if (slides.length < 2) return;
+
+    const interval = Number(root.dataset.interval) || 5000;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    let index = 0;
+    setInterval(() => {
+      slides[index].classList.remove("active");
+      index = (index + 1) % slides.length;
+      slides[index].classList.add("active");
+    }, interval);
+  }
+
+  startSlideshow();
+</script>

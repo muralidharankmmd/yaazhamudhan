@@ -2,10 +2,14 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MomentCard from "../components/MomentCard.astro";
+import StoryPreview from "../components/StoryPreview.astro";
 
 const moments = (await getCollection("moments")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+const storyMoments = moments.filter((m) => m.data.story);
+const gridMoments = moments.filter((m) => !m.data.story);
 ---
 
 <BaseLayout title="Yaazhamudhan — Photos & Milestones">
@@ -18,15 +22,18 @@ const moments = (await getCollection("moments")).sort(
   </header>
 
   <main class="wrap">
+    {storyMoments.map((moment) => <StoryPreview moment={moment} />)}
     {
-      moments.length > 0 ? (
+      gridMoments.length > 0 ? (
         <div class="grid">
-          {moments.map((moment) => (
+          {gridMoments.map((moment) => (
             <MomentCard moment={moment} />
           ))}
         </div>
       ) : (
-        <p class="empty-state">No moments yet — add one under src/content/moments/</p>
+        storyMoments.length === 0 && (
+          <p class="empty-state">No moments yet — add one under src/content/moments/</p>
+        )
       )
     }
   </main>

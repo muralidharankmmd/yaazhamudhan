@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import BackgroundSlideshow from "../components/BackgroundSlideshow.astro";
 
 interface Props {
   title?: string;
@@ -26,6 +27,9 @@ const {
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <BackgroundSlideshow />
+    <div class="page">
+      <slot />
+    </div>
   </body>
 </html>
