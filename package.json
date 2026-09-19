@@ -15,6 +15,11 @@
     "astro": "^7.3.3"
   },
   "allowScripts": {
-    "esbuild": true
+    "esbuild": true,
+    "workerd@1.20260918.1": true,
+    "fsevents@2.3.3": true
+  },
+  "devDependencies": {
+    "wrangler": "^4.135.0"
   }
 }
