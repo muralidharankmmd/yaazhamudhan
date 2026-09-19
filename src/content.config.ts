@@ -19,6 +19,14 @@ const moments = defineCollection({
       // into a full-page, one-at-a-time viewer (gallery images, then
       // videos, in the order listed) instead of the standard grid layout.
       story: z.boolean().default(false),
+      // YouTube/Vimeo links to embed as responsive players (for footage
+      // that lives externally rather than as a self-hosted file).
+      embeds: z.array(z.string().url()).default([]),
+      // External citations/links worth surfacing as a card, e.g. an
+      // official record listing. { label, url }.
+      links: z
+        .array(z.object({ label: z.string(), url: z.string().url() }))
+        .default([]),
     }),
 });
 

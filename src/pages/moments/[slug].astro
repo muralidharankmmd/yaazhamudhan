@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import StoryViewer from "../../components/StoryViewer.astro";
+import { getYouTubeEmbedUrl } from "../../lib/youtube";
 
 export async function getStaticPaths() {
   const moments = await getCollection("moments");
@@ -13,7 +14,8 @@ export async function getStaticPaths() {
 }
 
 const { moment } = Astro.props;
-const { title, date, type, description, cover, gallery, videos } = moment.data;
+const { title, date, type, description, cover, gallery, videos, embeds, links } =
+  moment.data;
 const { Content } = await render(moment);
 
 const icon = type === "achievement" ? "🏆" : type === "milestone" ? "🌱" : "📸";
@@ -63,6 +65,37 @@ const formattedDate = date.toLocaleDateString("en-US", {
           <div class="videos">
             {videos.map((src) => (
               <video controls preload="metadata" src={src} />
+            ))}
+          </div>
+        )}
+
+        {embeds.length > 0 && (
+          <div class="embeds">
+            {embeds.map((url) => {
+              const embedUrl = getYouTubeEmbedUrl(url);
+              return (
+                embedUrl && (
+                  <div class="embed-frame">
+                    <iframe
+                      src={embedUrl}
+                      title={title}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    />
+                  </div>
+                )
+              );
+            })}
+          </div>
+        )}
+
+        {links.length > 0 && (
+          <div class="links">
+            {links.map((link) => (
+              <a class="link-card" href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.label} &rarr;
+              </a>
             ))}
           </div>
         )}
