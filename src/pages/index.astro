@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MomentCard from "../components/MomentCard.astro";
+
+const moments = (await getCollection("moments")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="Yaazhamudhan — Photos & Milestones">
+  <header class="site-header">
+    <div class="wrap">
+      <span class="kicker">Yaazhamudhan's World</span>
+      <h1>Growing up, one moment at a time</h1>
+      <p>Photos, videos, and little wins worth remembering.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {
+      moments.length > 0 ? (
+        <div class="grid">
+          {moments.map((moment) => (
+            <MomentCard moment={moment} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">No moments yet — add one under src/content/moments/</p>
+      )
+    }
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Made with love for Yaazhamudhan.</div>
+  </footer>
+</BaseLayout>

@@ -1,0 +1,37 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  moment: CollectionEntry<"moments">;
+}
+
+const { moment } = Astro.props;
+const { title, date, type, description, cover } = moment.data;
+
+const icon = type === "achievement" ? "🏆" : type === "milestone" ? "🌱" : "📸";
+
+const formattedDate = date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<a class="card" href={`/moments/${moment.id}/`}>
+  <div class="card-media">
+    {
+      cover ? (
+        <Image src={cover} alt={title} width={480} height={360} />
+      ) : (
+        <div class="placeholder">{icon}</div>
+      )
+    }
+  </div>
+  <div class="card-body">
+    <span class="badge">{type}</span>
+    <h2>{title}</h2>
+    <span class="date">{formattedDate}</span>
+    {description && <p class="description">{description}</p>}
+  </div>
+</a>
